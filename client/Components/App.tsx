@@ -1,7 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
+import Metronome from './Metronome';
 
 function App() {
-    return <div>React App</div>;
-};
+  return <Metronome />;
+}
 
 export default App;
