@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useRef, useEffect } from 'react';
 
 interface BeatNodeProps {
   onBPMChange: (newBPM: number) => void;
@@ -8,44 +8,67 @@ interface BeatNodeProps {
   maxBPM?: number;
 }
 
-function debounce(func: (...args: any[]) => void, wait: number): (...args: any[]) => void {
-  let timeout: NodeJS.Timeout;
-  return function (this: any, ...args: any[]) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
-  };
+function clip(val: number, min: number, max: number) {
+  if (val < min) return min;
+  if (val > max) return max;
+  return val;
 }
 
 function BPM({ onBPMChange, bpm, minBPM = 20, maxBPM = 400 }: BeatNodeProps) {
-  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const newBPM = parseInt(e.target.value);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.value = bpm.toString();
+    }
+  }, [bpm]);
+
+  function newBPM(newBPM: number) {
     if (isNaN(newBPM)) {
       return;
     }
-    if (newBPM <= 0 || newBPM > maxBPM) {
-      return;
-    }
-    onBPMChange(newBPM);
+    onBPMChange(clip(newBPM, minBPM, maxBPM));
   }
 
-  // const textOnChange = useCallback(debounce(onChange, 500), [minBPM, maxBPM]);
+  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = parseInt(e.target.value);
+    newBPM(val);
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      const val = parseInt(e.currentTarget.value);
+      e.currentTarget.blur();
+      newBPM(val);
+    }
+  }
+
+  function onBlur(e: React.FocusEvent<HTMLInputElement>) {
+    const val = parseInt(e.target.value);
+    newBPM(val);
+  }
 
   function minusBPM() {
-    if (bpm > minBPM) {
-      onBPMChange(bpm - 1);
-    }
+    newBPM(bpm - 1);
   }
 
   function plusBPM() {
-    if (bpm < maxBPM) {
-      onBPMChange(bpm + 1);
-    }
+    newBPM(bpm + 1);
   }
 
   return (
     <div>
       <label>
-        <input id="bpm" type="text" pattern="[0-9]*" value={bpm} onInput={onChange} /> BPM
+        <input
+          id="bpm"
+          type="text"
+          pattern="[0-9]*"
+          ref={inputRef}
+          defaultValue={bpm}
+          onKeyDown={onKeyDown}
+          onBlur={onBlur}
+        />{' '}
+        BPM
       </label>
       <button id="minus-bpm-button" onClick={minusBPM}>
         -
