@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useContext } from 'react';
+
+import DisabledContext from './DisabledContext';
 
 interface BeatNodeProps {
   onBPMChange: (newBPM: number) => void;
@@ -16,6 +18,7 @@ function clip(val: number, min: number, max: number) {
 
 function BPM({ onBPMChange, bpm, minBPM = 20, maxBPM = 400 }: BeatNodeProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const disabled = useContext(DisabledContext);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -67,14 +70,24 @@ function BPM({ onBPMChange, bpm, minBPM = 20, maxBPM = 400 }: BeatNodeProps) {
           defaultValue={bpm}
           onKeyDown={onKeyDown}
           onBlur={onBlur}
+          disabled={disabled}
         />{' '}
         BPM
       </label>
-      <button id="minus-bpm-button" onClick={minusBPM}>
+      <button id="minus-bpm-button" onClick={minusBPM} disabled={disabled}>
         -
       </button>
-      <input id="bpm-slider" type="range" min={minBPM} max={maxBPM} step="1" value={bpm} onChange={onChange} />
-      <button id="plus-bpm-button" onClick={plusBPM}>
+      <input
+        id="bpm-slider"
+        type="range"
+        min={minBPM}
+        max={maxBPM}
+        step="1"
+        value={bpm}
+        onChange={onChange}
+        disabled={disabled}
+      />
+      <button id="plus-bpm-button" onClick={plusBPM} disabled={disabled}>
         +
       </button>
     </div>

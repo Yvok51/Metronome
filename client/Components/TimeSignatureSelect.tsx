@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { useContext } from 'react';
+
+import DisabledContext from './DisabledContext';
 
 type TimeSignature = { top: number; bottom: number };
 type TimeSignatureChange = (timeSignature: TimeSignature) => void;
@@ -11,6 +14,8 @@ interface TimeSignatureProps {
 }
 
 function TimeSignatureSelect({ signature, onSignatureChange, maxUpper = 16, maxLowerPower = 3 }: TimeSignatureProps) {
+  const disabled = useContext(DisabledContext);
+
   const upperOptions = Array.from(Array(maxUpper).keys()).map(i => (
     <option key={i} value={i + 1}>
       {i + 1}
@@ -37,13 +42,15 @@ function TimeSignatureSelect({ signature, onSignatureChange, maxUpper = 16, maxL
       <select
         id="upper-time-signature"
         value={signature.top}
-        onChange={onChange(val => ({ top: val, bottom: signature.bottom }))}>
+        onChange={onChange(val => ({ top: val, bottom: signature.bottom }))}
+        disabled={disabled}>
         {upperOptions}
       </select>
       <select
         id="lower-time-signature"
         value={signature.bottom}
-        onChange={onChange(val => ({ top: signature.top, bottom: val }))}>
+        onChange={onChange(val => ({ top: signature.top, bottom: val }))}
+        disabled={disabled}>
         {lowerOptions}
       </select>
     </div>
