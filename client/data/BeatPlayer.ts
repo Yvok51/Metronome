@@ -1,27 +1,4 @@
 import Beat from './Beat';
-import beatLowURL from './beatLow.wav';
-import beatMidURL from './beatMid.wav';
-import beatHighURL from './beatHigh.wav';
-
-async function loadSound(url: string, audioContext: AudioContext, abortSignal?: AbortSignal): Promise<AudioBuffer> {
-  const response = await fetch(url, { signal: abortSignal });
-  const arrayBuffer = await response.arrayBuffer();
-  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-  return audioBuffer;
-}
-
-async function loadSounds(
-  audioContext: AudioContext,
-  abortSignal?: AbortSignal,
-): Promise<{ low: AudioBuffer; mid: AudioBuffer; high: AudioBuffer }> {
-  const sounds = await Promise.all([
-    loadSound(beatLowURL, audioContext, abortSignal),
-    loadSound(beatMidURL, audioContext, abortSignal),
-    loadSound(beatHighURL, audioContext, abortSignal),
-  ]);
-
-  return { low: sounds[0], mid: sounds[1], high: sounds[2] };
-}
 
 class BeatPlayer {
   private static readonly _audioContext = new AudioContext();
@@ -45,6 +22,8 @@ class BeatPlayer {
 
   private timerId: number | undefined;
 
+  private subscriptions: SubscriptionList = new SubscriptionList();
+
   constructor(beats: Beat[], bpm: number, sounds?: { low: AudioBuffer; mid: AudioBuffer; high: AudioBuffer }) {
     this._beats = beats;
     this._beatInterval = 60 / bpm;
@@ -56,7 +35,7 @@ class BeatPlayer {
   }
 
   setBeats(beats: Beat[]): void {
-    this._beatIndex = 0;
+    this._resetBeatIndex();
     this._beats = beats;
   }
 
@@ -66,9 +45,9 @@ class BeatPlayer {
 
   start(): void {
     if (!this._playing && this._sounds) {
+      this._resetBeatIndex();
       this._scheduleNextBeat(); // weird problem where the now timer did not start until the first beat was scheduled
       this.timerId = window.setInterval(() => {
-        console.log('called');
         this._scheduleNextBeats();
       }, BeatPlayer.INTERVAL_MS);
       this._playing = true;
@@ -79,6 +58,15 @@ class BeatPlayer {
     this._playing = false;
     window.clearInterval(this.timerId);
     this.timerId = undefined;
+  }
+
+  subscribe(callback: () => void): () => void {
+    const unsubscribe = this.subscriptions.subscribe(callback);
+    return unsubscribe;
+  }
+    
+  beatIndexSnapshot(): number {
+    return this._beatIndex;
   }
 
   private _scheduleNextBeats(): void {
@@ -98,6 +86,7 @@ class BeatPlayer {
   private _scheduleNextBeat(): void;
   private _scheduleNextBeat(time: number): void;
   private _scheduleNextBeat(time?: number): void {
+    this._advanceBeatIndex();
     const beat = this._beats[this._beatIndex];
     const sound = this._getSound(beat);
     if (sound) {
@@ -107,7 +96,6 @@ class BeatPlayer {
         this._playSound(sound);
       }
     }
-    this._beatIndex = this._nextBeatIndex();
     this._lastBeatTime = time ? time : this._now;
   }
 
@@ -144,9 +132,30 @@ class BeatPlayer {
     }
   }
 
-  private _nextBeatIndex(): number {
-    return (this._beatIndex + 1) % this._beats.length;
+  private _advanceBeatIndex(): void {
+
+    this._beatIndex = (this._beatIndex + 1) % this._beats.length;
+    this.subscriptions.notify();
+  }
+
+  private _resetBeatIndex(): void {
+    this._beatIndex = -1;
   }
 }
 
-export { BeatPlayer, loadSounds };
+class SubscriptionList {
+  listeners: Function[] = [];
+
+  subscribe(listener: Function): () => void {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== listener);
+    };
+  }
+
+  notify(): void {
+    this.listeners.forEach(l => l());
+  }
+}
+
+export default BeatPlayer;
