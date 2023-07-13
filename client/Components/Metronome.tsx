@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { useState, useReducer, useEffect, useRef } from 'react';
+import { useState, useReducer, useEffect, useRef, useSyncExternalStore } from 'react';
 
 import { TimeSignatureSelect } from './TimeSignatureSelect';
 import { beatReducer } from './BeatReducer';
-import { BeatPlayer, loadSounds } from '../data/BeatPlayer';
+import BeatPlayer from '../data/BeatPlayer';
+import loadSounds from '../data/LoadSounds';
 import Beat from '../data/Beat';
 import PlayButton from './PlayButton';
 import Beats from './Beats';
@@ -20,13 +21,24 @@ function Metronome() {
   const [bottomSignature, setBottomSignature] = useState(4);
   const [beats, beatDispatch] = useReducer(beatReducer, defaultBeats);
   const player = useRef<BeatPlayer>(new BeatPlayer(beats, bpm));
+  const beatIndex = useSyncExternalStore(
+    player.current.subscribe.bind(player.current),
+    player.current.beatIndexSnapshot.bind(player.current),
+  );
 
   useEffect(() => {
     const abortController = new AbortController();
     loadSounds(BeatPlayer.audioContext, abortController.signal)
       .then(s => player.current.setSounds(s))
-      .then(() => setSoundsLoaded(true))
-      .catch(() => setSoundsFailed(true));
+      .then(() => {
+        setSoundsLoaded(true);
+        setSoundsFailed(false);
+      })
+      .catch(e => {
+        setSoundsLoaded(false);
+        setSoundsFailed(true);
+        console.log(e);
+      });
     return () => {
       abortController.abort();
     };
@@ -79,9 +91,9 @@ function Metronome() {
   }
 
   return (
-    <div>
+    <div className="metronome">
       <DisabledContext.Provider value={!soundsLoaded || soundsFailed}>
-        <Beats beats={beats} increaseBeatLevel={onBeatClick} />
+        <Beats beats={beats} increaseBeatLevel={onBeatClick} highlightedIdx={playing ? beatIndex : undefined} />
         <BPM bpm={bpm} onBPMChange={onBPMChange} />
         <TimeSignatureSelect
           signature={{ top: beats.length, bottom: bottomSignature }}

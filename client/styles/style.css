@@ -1,0 +1,90 @@
+
+:root {
+  --dark-color: rgb(50, 50, 50);
+  --light-color: rgb(255, 255, 245);
+  --transition-duration: 300ms;
+  --transition-function: ease;
+}
+
+.beat-collection {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  width: 80wv;
+  gap: 1vw;
+  height: 25vh;
+
+  background-color: var(--light-color);
+}
+
+.beat-node {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: 2px;
+  flex-shrink: 1;
+  flex-grow: 1;
+  max-width: 10vw;
+  
+  padding: 1vmin;
+}
+
+.beat-highlighted {
+  background-color: rgb(253, 189, 93);
+}
+
+.beat-row {
+  border: 2px solid var(--dark-color);
+  flex: 1;
+}
+
+.beat-row-full {
+  background-color: var(--dark-color);
+}
+
+.beat-row-empty {
+  background-color: var(--light-color);
+}
+
+button {
+  background-color: var(--light-color);
+  color: var(--dark-color);
+  border: 2px solid var(--dark-color);
+  font-size: 20px;
+  font-weight: bold;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-function);
+}
+
+button.operator-btn {
+  height: 50px;
+  width: 50px;
+  border-radius: 10px;
+  transition-property: transform;
+}
+
+button.operator-btn:hover {
+  transition-property: transform;
+  transform: scale(1.1);
+}
+
+.play-button {
+  height: 50px;
+  width: 200px;
+  border-radius: 10px;
+  transition-property: color background-color;
+}
+
+.play-button.to-pause:hover {
+  background-color: rgb(255, 0, 0);
+  color: white;
+  transition-property: color background-color;
+}
+
+.play-button.to-play:hover {
+  background-color: rgb(0, 175, 9);
+  color: white;
+  transition-property: color background-color;
+}

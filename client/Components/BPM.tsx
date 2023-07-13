@@ -74,7 +74,7 @@ function BPM({ onBPMChange, bpm, minBPM = 20, maxBPM = 400 }: BeatNodeProps) {
         />{' '}
         BPM
       </label>
-      <button id="minus-bpm-button" onClick={minusBPM} disabled={disabled}>
+      <button id="minus-bpm-button" className="operator-btn" onClick={minusBPM} disabled={disabled}>
         -
       </button>
       <input
@@ -87,7 +87,7 @@ function BPM({ onBPMChange, bpm, minBPM = 20, maxBPM = 400 }: BeatNodeProps) {
         onChange={onChange}
         disabled={disabled}
       />
-      <button id="plus-bpm-button" onClick={plusBPM} disabled={disabled}>
+      <button id="plus-bpm-button" className="operator-btn" onClick={plusBPM} disabled={disabled}>
         +
       </button>
     </div>

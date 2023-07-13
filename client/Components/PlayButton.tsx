@@ -6,11 +6,12 @@ import DisabledContext from './DisabledContext';
 function PlayButton({ isPlaying, togglePlay }: { isPlaying: boolean; togglePlay: () => void }) {
   const disabled = useContext(DisabledContext);
 
-  const playButtonClass = 'play-button';
-  const pauseButtonClass = 'pause-button';
+  const buttonClass = 'play-button';
+  const toPlayClass = ' to-play';
+  const toPauseClass = ' to-pause';
 
   return (
-    <button disabled={disabled} onClick={togglePlay} className={isPlaying ? pauseButtonClass : playButtonClass}>
+    <button disabled={disabled} onClick={togglePlay} className={buttonClass + (isPlaying ? toPauseClass : toPlayClass)}>
       {isPlaying ? 'Pause' : 'Play'}
     </button>
   );
