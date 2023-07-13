@@ -2,10 +2,10 @@
   "name": "metronome",
   "version": "1.0.0",
   "description": "Metronome application written in React",
-  "main": "index.js",
+   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && webpack --mode development",
+    "build": "webpack --mode development",
     "dev": "nodemon app/app.js"
   },
   "repository": {

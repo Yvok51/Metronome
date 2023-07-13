@@ -4,20 +4,15 @@ const HTMLWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   entry: "./client/index.tsx",
+  devtool: "inline-source-map",
   output: {
     filename: "bundle.js",
     path: path.resolve("dist"),
     publicPath: "/",
+    clean: true,
   },
   module: {
     rules:[
-      /*
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: "babel-loader"
-      },
-      */
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
@@ -41,10 +36,14 @@ module.exports = {
         ],
       },
       */
+     {
+        test: /\.wav$/,
+        type: "asset/resource",
+     }
     ], 
   },
   resolve: {
-    extensions: [".js", ".ts", ".tsx"],
+    extensions: [".js", ".ts", ".tsx", ".wav"],
   },
   plugins: [
     new HTMLWebpackPlugin({
