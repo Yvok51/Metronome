@@ -38,7 +38,7 @@ function TimeSignatureSelect({ signature, onSignatureChange, maxUpper = 16, maxL
   }
 
   return (
-    <div>
+    <div className="time-signature">
       <select
         id="upper-time-signature"
         value={signature.top}

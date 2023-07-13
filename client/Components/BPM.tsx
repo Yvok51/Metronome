@@ -60,36 +60,40 @@ function BPM({ onBPMChange, bpm, minBPM = 20, maxBPM = 400 }: BeatNodeProps) {
   }
 
   return (
-    <div>
-      <label>
+    <div className="bpm-control">
+      <div className="bpm-text-input">
+        <label>
+          <input
+            id="bpm"
+            type="text"
+            pattern="[0-9]*"
+            ref={inputRef}
+            defaultValue={bpm}
+            onKeyDown={onKeyDown}
+            onBlur={onBlur}
+            disabled={disabled}
+          />{' '}
+          BPM
+        </label>
+      </div>
+      <div className="bpm-range-wrap">
+        <button id="minus-bpm-button" className="operator-btn" onClick={minusBPM} disabled={disabled}>
+          -
+        </button>
         <input
-          id="bpm"
-          type="text"
-          pattern="[0-9]*"
-          ref={inputRef}
-          defaultValue={bpm}
-          onKeyDown={onKeyDown}
-          onBlur={onBlur}
+          id="bpm-slider"
+          type="range"
+          min={minBPM}
+          max={maxBPM}
+          step="1"
+          value={bpm}
+          onChange={onChange}
           disabled={disabled}
-        />{' '}
-        BPM
-      </label>
-      <button id="minus-bpm-button" className="operator-btn" onClick={minusBPM} disabled={disabled}>
-        -
-      </button>
-      <input
-        id="bpm-slider"
-        type="range"
-        min={minBPM}
-        max={maxBPM}
-        step="1"
-        value={bpm}
-        onChange={onChange}
-        disabled={disabled}
-      />
-      <button id="plus-bpm-button" className="operator-btn" onClick={plusBPM} disabled={disabled}>
-        +
-      </button>
+        />
+        <button id="plus-bpm-button" className="operator-btn" onClick={plusBPM} disabled={disabled}>
+          +
+        </button>
+      </div>
     </div>
   );
 }

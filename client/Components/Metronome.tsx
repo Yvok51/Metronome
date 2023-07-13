@@ -94,12 +94,14 @@ function Metronome() {
     <div className="metronome">
       <DisabledContext.Provider value={!soundsLoaded || soundsFailed}>
         <Beats beats={beats} increaseBeatLevel={onBeatClick} highlightedIdx={playing ? beatIndex : undefined} />
-        <BPM bpm={bpm} onBPMChange={onBPMChange} />
         <TimeSignatureSelect
           signature={{ top: beats.length, bottom: bottomSignature }}
           onSignatureChange={onSignatureChange}
         />
-        <PlayButton isPlaying={playing} togglePlay={onPlayClick} />
+        <BPM bpm={bpm} onBPMChange={onBPMChange} />
+        <div className="metronome-control-btns">
+          <PlayButton isPlaying={playing} togglePlay={onPlayClick} />
+        </div>
       </DisabledContext.Provider>
       {soundsFailed ? <p className="error-message">Sounds failed to load</p> : null}
     </div>
