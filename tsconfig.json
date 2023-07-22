@@ -8,11 +8,19 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "strict": true,
+    "alwaysStrict": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "allowUnreachableCode": false,
+
   },
   "include": [
     "./client/**/*"
