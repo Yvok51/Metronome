@@ -88,6 +88,9 @@ class BeatPlayer {
   private _scheduleNextBeat(time?: number): void {
     this._advanceBeatIndex();
     const beat = this._beats[this._beatIndex];
+    if (!beat) {
+      throw new Error(`Invalid beat index: ${this._beatIndex}`);
+    }
     const sound = this._getSound(beat);
     if (sound) {
       if (time) {
